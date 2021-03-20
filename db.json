@@ -1,0 +1,22 @@
+{
+  "tasks": [
+    {
+      "id": 1,
+      "text": "Hello Text 1",
+      "date": "18 Apr 2021 11:30 AM",
+      "reminder": true
+    }, 
+    {
+      "id": 2,
+      "text": "Hello Text 2",
+      "date": "18 Apr 2021 11:30 AM",
+      "reminder": true
+    }, 
+    {
+      "id": 3,
+      "text": "Hello Text 3",
+      "date": "18 Apr 2021 11:30 AM",
+      "reminder": false
+    }
+  ]
+}
