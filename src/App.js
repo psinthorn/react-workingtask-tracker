@@ -1,7 +1,11 @@
-import {useState, useEffect} from 'react'
+import {useState, useEffect, Fragment} from 'react'
+import {BrowserRouter as Router, Route} from "react-router-dom"
 import Header from "./components/Header"
+import Footer from "./components/Footer"
 import Tasks from "./components/Tasks"
 import Addtask from "./components/Addtask"
+import About from "./components/About"
+
 
 function App() {
   const [showAddForm, setShowAddForm] = useState(false)
@@ -88,22 +92,37 @@ function App() {
 
   
   return (
-    <div className="container">
-      <header className="App-header">
-       <Header onAdd={ () => setShowAddForm(!showAddForm) }  showAddCloseBtn={showAddForm} />
 
-       { showAddForm &&
-       <Addtask onAdd={addTask} />
-        }
+    <Router>
+      <Fragment>
+        <div className="container">
+              <header className="App-header">
+                  <Header onAdd={ () => setShowAddForm(!showAddForm) }  showAddCloseBtn={showAddForm} />
+        
+                      <Route path="/" exact render={(props) => (
+                        <Fragment>
+                                { showAddForm &&
+                                <Addtask onAdd={addTask} />
+                                  }
 
-       {tasks.length > 0 ? (
-       <Tasks tasks={tasks} onDelete={deleteTask} onToggle={toggleReminder} />
-       ):(
-         'No work tasks available'
-        )}
-       
-      </header>
-    </div>
+                                {tasks.length > 0 ? (
+                                <Tasks tasks={tasks} onDelete={deleteTask} onToggle={toggleReminder} />
+                                ):(
+                                  'No work tasks available'
+                                  )}
+                        </Fragment>
+                      )} />
+
+              </header>
+              <Route path="/about" component={About} />
+        </div>
+        <div className="card m-4">
+            <div className="card-body">
+              <Footer className="mt-3" />
+            </div>
+        </div>
+      </Fragment>
+    </Router>
   );
 }
 
