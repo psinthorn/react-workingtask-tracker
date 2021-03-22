@@ -8,38 +8,83 @@ function App() {
   const [tasks, setTasks] = useState([])
 
   useEffect(() => {
-      
-      fetchTasks()
+      const getTasks = async () => {
+        const tasks = await fetchTasks()
+        setTasks(tasks)
+      }
+      getTasks()
   }, [])
 
-  // Fetch taks
+  // Fetch all tasks
   const fetchTasks = async () => {
-    const res = await fetch('http://localhost:5000/tasks')
+    const res = await fetch(`http://localhost:5000/tasks`)
+    const data = await res.json()
+    return data
+  }
+
+  // Fetch task
+  const fetchTask = async (id) => {
+    const res = await fetch(`http://localhost:5000/tasks/${id}`)
     const data = await res.json()
     return data
   }
 
   // Add taks
-  const addTask = (task) => {
-    const id = Math.floor(Math.random() * 10000) + 1
-    console.log(id)
+  const addTask = async (task) => {
 
-    const newTask = { id, ...task }
+    const res = await fetch(`http://localhost:5000/tasks`, {
+      method: 'POST',
+      headers: {
+        'Content-type': 'application/json' 
+      },
+      body: JSON.stringify(task)
+    })
+
+    const newTask = await res.json()
+
     setTasks([...tasks, newTask])
 
-  }
+    // const id = Math.floor(Math.random() * 10000) + 1
+    // console.log(id)
 
-  // Toggle Reminder
-  const toggleReminder = (id) => {
-    console.log(id) 
-    setTasks(tasks.map((task) => task.id === id ? {...task, reminder: !task.reminder} : task))
-  
+    // const newTask = { id, ...task }
+    // setTasks([...tasks, newTask])
+
   }
 
   // Delete task
-  const deleteTask = (id) => {
+  const deleteTask =  async (id) => {
+    await fetch(`http://localhost:5000/tasks/${id}`, {
+      method: 'DELETE'
+    })
+
     setTasks(tasks.filter((task) => task.id !== id))
   }
+
+  // Toggle Reminder
+  const toggleReminder = async (id) => {
+
+    const taskById = await fetchTask(id)
+
+    const updateTask = {...taskById, reminder: !taskById.reminder}
+
+    const res = await fetch(`http://localhost:5000/tasks/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-type': 'application/json' 
+      },
+      body: JSON.stringify(updateTask)
+    })
+
+    // ค่าที่รับกลับหลังจากอัพเดทที่ serverแล้ว
+    const data = await res.json()
+
+    // settasks on frontend the use latest data from server
+    // อัพเดทค่า task ที่ frontend  ให้ตรงกับข้อมูลล่าสุดที่รับมาจาก server
+    setTasks(tasks.map((task) => task.id === id ? {...task, reminder: data.reminder} : task))
+  
+  }
+
 
   
   return (
